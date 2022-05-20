@@ -1,8 +1,8 @@
 from abc import abstractclassmethod
-from .treenode import TreeNodeDrawing
+from GUI.tree import TreeNodeDrawing
 from tkinter import *
-from .settings import *
-from .terminals import *
+from GUI.settings import *
+from parser.terminals import *
 
 class Rule:
 
@@ -44,8 +44,8 @@ class Rule:
 class Exp(TreeNodeDrawing,Rule):
     
     def __init__(self, treecanvas, level, parent, left, right,):
-        super().__init__('Exp')
-        super().__init__(False, treecanvas, level, parent, left, right, 'Exp')
+        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Exp', False)
+        Rule.__init__(self,rule_name= 'Exp')
 
 
     def propagate(self,input):
@@ -55,7 +55,7 @@ class Exp(TreeNodeDrawing,Rule):
             super().add_children(children)
             children = super().get_children()
         else:
-            self.raise_exception()
+            self.raise_exception(input)
 
 
         return children
@@ -63,20 +63,18 @@ class Exp(TreeNodeDrawing,Rule):
 class ExpDash(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
-        super().__init__( 'Exp\'')
-        super().__init__(False, treecanvas, level, parent, left, right, 'Exp\'')
+        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Exp\'', False)
+        Rule.__init__(self,rule_name= 'Exp\'')
 
 
     def propagate(self,input):
         children = []
-        if input == '+':
-            children = [Addop,Term]   
-        elif input=='-':
-            children = [Addop,Term]
+        if input == '+' or input=='-':
+            children = [Addop,Term,ExpDash]   
         elif input ==')'or input =='$' :
             children = [EpsilonTerminal]
         else:
-            self.raise_exception()
+            self.raise_exception(input)
 
         if children:
             super().add_children(children)
@@ -88,9 +86,9 @@ class ExpDash(TreeNodeDrawing,Rule):
 class Addop(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
-        super().__init__( 'Addop')
-        super().__init__(False, treecanvas, level, parent, left, right, 'Addop')
-
+        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Addop', False)
+        Rule.__init__( self,rule_name= 'Addop')
+        
     def propagate(self,input):
         children = []
         if input == '+':
@@ -98,7 +96,7 @@ class Addop(TreeNodeDrawing,Rule):
         elif input=='-':
             children = [minusTerminal]
         else:
-            self.raise_exception()
+            self.raise_exception(input)
 
         if children:
             super().add_children(children)
@@ -109,8 +107,8 @@ class Addop(TreeNodeDrawing,Rule):
 class Mullop(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
-        super().__init__( 'Mullop')
-        super().__init__(False, treecanvas, level, parent, left, right, 'Mullop')
+        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Mullop', False)
+        Rule.__init__( self,rule_name= 'Mullop')
 
     def propagate(self,input):
         children = []
@@ -119,7 +117,7 @@ class Mullop(TreeNodeDrawing,Rule):
         elif input=='/':
             children = [divisionTerminal]
         else:
-            self.raise_exception()
+            self.raise_exception(input)
 
         if children:
             super().add_children(children)
@@ -131,22 +129,22 @@ class Mullop(TreeNodeDrawing,Rule):
 class Factor(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
-        super().__init__( 'Factor')
-        super().__init__(False, treecanvas, level, parent, left, right, 'Factor')
+        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Factor', False)
+        Rule.__init__(self, rule_name='Factor')
 
     def propagate(self,input):
         children = []
         reset_label = False
-        if input == Rule.check_identifier(input):
+        if  Rule.check_identifier(input):
             children = [IDTerminal]
             reset_label = True
-        elif input==Rule.check_int(input):
+        elif Rule.check_int(input):
             children = [NumTerminal]
             reset_label = True
         elif input=='(':
             children = [leftBracketTerminal,Exp,rightBracketTerminal]
         else:
-            self.raise_exception()
+            self.raise_exception(input)
 
         if children:
             super().add_children(children)
@@ -160,15 +158,16 @@ class Factor(TreeNodeDrawing,Rule):
 class Term(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
-        super().__init__( 'Term')
-        super().__init__(False, treecanvas, level, parent, left, right, 'Term')
+        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Term', False)
+        Rule.__init__( self,rule_name='Term')
+        
 
     def propagate(self,input):
         children = []
-        if input =='(' or input == Rule.check_identifier(input) or Rule.check_int(input) :
+        if input =='(' or  Rule.check_identifier(input) or Rule.check_int(input) :
             children = [Factor,TermDash]
         else:
-            self.raise_exception()
+            self.raise_exception(input)
 
         if children:
             super().add_children(children)
@@ -181,17 +180,17 @@ class Term(TreeNodeDrawing,Rule):
 class TermDash(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
-        super().__init__( 'Term\'')
-        super().__init__(False, treecanvas, level, parent, left, right, 'Term\'')
+        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Term\'', False)
+        Rule.__init__( self,rule_name='Term\'')
 
     def propagate(self,input):
         children = []
         if input =='*' or input == '/':
-            children = [Mullop,Factor]
+            children = [Mullop,Factor,TermDash]
         elif input =='+' or input =='-' or input ==')' or input=='$':
             children = [EpsilonTerminal]
         else:
-            self.raise_exception()
+            self.raise_exception(input)
 
         if children:
             super().add_children(children)

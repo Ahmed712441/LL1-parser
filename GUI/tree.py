@@ -1,11 +1,7 @@
 from tkinter import *
-from settings import *
+from .settings import *
 
-'''
-testing file for tree drawing algorithm
-'''
-
-class TreeNodeTest:
+class TreeNodeDrawing:
 
     def __init__(self,treecanvas,level,parent,left,right,Line=None,label='a',terminal=True):
         self.__terminal = terminal
@@ -21,7 +17,16 @@ class TreeNodeTest:
         self.__weight = 1
         self.__parent_line = Line
         self.__label = label
-        
+    
+    def __str__(self):
+        return self.__label
+    
+    def __repr__(self):
+        return self.__label
+
+    def set_label(self,new_label):
+        self.__label = new_label
+        self.__canvas.itemconfig(self.__label_id, text=str(new_label))
 
     def set_parent_line(self,Line):
         self.__parent_line = Line
@@ -36,11 +41,13 @@ class TreeNodeTest:
 
     def has_children(self):
         return len(self.__children) > 0
+    
+    def get_children(self):
+        return self.__children
 
     def draw(self):
         if not self.__terminal:
             self.__id = self.__create_circle()
-            self.bind_event()
         self.__label_id = self.__canvas.create_text((self.__x, self.__y), text=self.__label)
         
 
@@ -78,10 +85,10 @@ class TreeNodeTest:
     def create_line(self,child_coor):
         return self.__canvas.create_line(self.__x , self.__y+TREE_NODE_RADUIS,child_coor[0],child_coor[1]-TREE_NODE_RADUIS,arrow="last",fill=LINE_COLOR)
 
-    def __create_add_node(self,left,right):
+    def __create_add_node(self,left,right,child_class):
 
         
-        node = TreeNodeTest(self.__canvas,self.__level+1,self,left,right)
+        node = child_class(self.__canvas,self.__level+1,self,left,right)
         node.draw()
         line = self.create_line(node.get_coor())
         node.set_parent_line(line)
@@ -107,13 +114,13 @@ class TreeNodeTest:
 
         return right_bounding , node_width
 
-    def reset_children(self,add_node:int):
+    def reset_children(self,add_node:int,child=None):
         
         left_bounding,node_width = self.__reset_margin(add_node)
  
         if(add_node > 0):
             right_bounding = left_bounding+node_width
-            self.__create_add_node(left_bounding,right_bounding)
+            self.__create_add_node(left_bounding,right_bounding,child)
             
             
     def reset_parent(self):
@@ -124,21 +131,22 @@ class TreeNodeTest:
     
     
 
-    def add_children(self,num_of_nodes=3):
-        
-        for node in range(0,num_of_nodes):
-            self.add_child()
+    def add_children(self,children):
+
+        for child in children:
+            self.add_child(child)
+            
         
     
-    def add_child(self):
+    def add_child(self,child):
         
         num_of_nodes = len(self.__children)
         if num_of_nodes == 0:
-            self.__create_add_node(self.__left,self.__right)
+            self.__create_add_node(self.__left,self.__right,child)
         else:
             self.add_weight()
             self.reset_parent()
-            self.reset_children(1)
+            self.reset_children(1,child)
             
 
     def __create_circle(self): 
@@ -150,38 +158,23 @@ class TreeNodeTest:
          
         return self.__canvas.create_oval(x0, y0, x1, y1,fill=CIRCLE_COLOR)
 
-    def bind_event(self):
-        self.__canvas.tag_bind(self.__id,'<Button-1>',lambda x : self.add_children(3))
 
+class TreeCanvas(Frame):
 
-class TreeCanvasTest(Frame):
-
-    def __init__(self,root,width=200,height=200,canvas_width=1000,canvas_height=1000):
+    def __init__(self,root,canvas_width=1000,canvas_height=10000):
         
-        Frame.__init__(self, root,width=width,height=height) 
+        Frame.__init__(self, root) 
         self.count_nodes = 0 # this variable used to count nodes helpful in labeling nodes
         self.hor_scrollbar = Scrollbar(self, orient=HORIZONTAL)
-        self.ver_scrollbar = Scrollbar(self, orient=VERTICAL)
-        self.canvas = Canvas(self,height=height-100,width=width-100,background=CANVAS_BACKGROUND_COLOR,scrollregion=(0, 0, canvas_width, canvas_height),yscrollcommand=self.ver_scrollbar.set,xscrollcommand=self.hor_scrollbar.set) # canvas object
+        self.ver_scrollbar = Scrollbar(self, orient=VERTICAL) # height=height-20,width=width-20
+        self.canvas = Canvas(self,background=CANVAS_BACKGROUND_COLOR,scrollregion=(0, 0, canvas_width, canvas_height),yscrollcommand=self.ver_scrollbar.set,xscrollcommand=self.hor_scrollbar.set) # canvas object
         self.hor_scrollbar['command'] = self.canvas.xview
         self.ver_scrollbar['command'] = self.canvas.yview
-        self.grid_propagate(0) # used to assures that frame will take its height and width even its children are smaller
+        self.pack_on_screen()
+    
+    def pack_on_screen(self):
         self.canvas.grid(row=0,column=0,sticky=(N,W,E,S))  # places the canvas in row : 0 , column :0 in the frame
         self.hor_scrollbar.grid(column=0, row=1, sticky=(W,E))
         self.ver_scrollbar.grid(column=1, row=0, sticky=(N,S))
-        
-
-
-if __name__=="__main__":
-
-
-    root =  Tk()
-    root.geometry("600x600")
-
-    can = TreeCanvasTest(root,500,500)
-    n = TreeNodeTest(can.canvas ,0,None,0,400,terminal=False)
-    n.draw()
-    can.grid()
-
-
-    root.mainloop()
+        self.rowconfigure(0,weight=1)
+        self.columnconfigure(0,weight=1)
