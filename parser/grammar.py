@@ -1,4 +1,3 @@
-from abc import abstractclassmethod
 from GUI.tree import TreeNodeDrawing
 from tkinter import *
 from GUI.settings import *
@@ -6,8 +5,9 @@ from parser.terminals import *
 
 class Rule:
 
-    def __init__(self,rule_name):
+    def __init__(self,rule_name,rules=None):
         self.__rule_name = rule_name
+        self.__rule_dict = rules
 
     def __str__(self):
         return self.__rule_name
@@ -15,9 +15,18 @@ class Rule:
     def raise_exception(self,input):
         raise Exception(f'{self.__str__()} rule can\'t parse {input}')
 
-    @abstractclassmethod
     def propagate(self,input):
-        pass
+        
+        id = self.check_identifier(input)
+        num = self.check_int(input)
+        str =  'id' if id else 'Num' if num else input
+        children = self.__rule_dict[str]
+        self.add_children(children)
+        children = self.get_children()
+        if (isinstance(children[0],(NumTerminal,IDTerminal))):
+            children[0].set_label(input)
+        return children
+        
     
     @staticmethod
     def check_identifier(input):
@@ -44,159 +53,83 @@ class Rule:
 class Exp(TreeNodeDrawing,Rule):
     
     def __init__(self, treecanvas, level, parent, left, right,):
+        rules = dict()
+        rules['('] = [ Term ,ExpDash ]
+        rules['id'] = [ Term ,ExpDash ]
+        rules['Num'] = [ Term ,ExpDash ] 
         TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Exp', False)
-        Rule.__init__(self,rule_name= 'Exp')
+        Rule.__init__(self,rule_name= 'Exp',rules=rules)
 
-
-    def propagate(self,input):
-        children = [] 
-        if input == '(' or  Rule.check_identifier(input) or Rule.check_int(input) :
-            children = [ Term ,ExpDash ]
-            super().add_children(children)
-            children = super().get_children()
-        else:
-            self.raise_exception(input)
-
-
-        return children
 
 class ExpDash(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
+        rules = dict()
+        rules['+'] = [Addop,Term,ExpDash] 
+        rules['-'] = [Addop,Term,ExpDash]
+        rules[')'] = [EpsilonTerminal]
+        rules['$'] = [EpsilonTerminal] 
         TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Exp\'', False)
-        Rule.__init__(self,rule_name= 'Exp\'')
+        Rule.__init__(self,rule_name= 'Exp\'',rules=rules)
 
-
-    def propagate(self,input):
-        children = []
-        if input == '+' or input=='-':
-            children = [Addop,Term,ExpDash]   
-        elif input ==')'or input =='$' :
-            children = [EpsilonTerminal]
-        else:
-            self.raise_exception(input)
-
-        if children:
-            super().add_children(children)
-            children = super().get_children()
-
-
-        return children
 
 class Addop(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
+        rules = dict()
+        rules['+'] = [plusTerminal] 
+        rules['-'] = [minusTerminal]
         TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Addop', False)
-        Rule.__init__( self,rule_name= 'Addop')
+        Rule.__init__( self,rule_name= 'Addop',rules=rules)
         
-    def propagate(self,input):
-        children = []
-        if input == '+':
-            children = [plusTerminal]
-        elif input=='-':
-            children = [minusTerminal]
-        else:
-            self.raise_exception(input)
-
-        if children:
-            super().add_children(children)
-            children = super().get_children()
-
-        return children
 
 class Mullop(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
+        rules = dict()
+        rules['*'] = [multiplyTerminal] 
+        rules['/'] = [divisionTerminal]
         TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Mullop', False)
-        Rule.__init__( self,rule_name= 'Mullop')
+        Rule.__init__( self,rule_name= 'Mullop',rules=rules)
 
-    def propagate(self,input):
-        children = []
-        if input == '*':
-            children = [multiplyTerminal]
-        elif input=='/':
-            children = [divisionTerminal]
-        else:
-            self.raise_exception(input)
-
-        if children:
-            super().add_children(children)
-            children = super().get_children()
-
-
-        return children
 
 class Factor(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
+        rules = dict()
+        rules['id'] = [IDTerminal] 
+        rules['Num'] = [NumTerminal]
+        rules['('] = [leftBracketTerminal,Exp,rightBracketTerminal]
         TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Factor', False)
-        Rule.__init__(self, rule_name='Factor')
+        Rule.__init__(self, rule_name='Factor',rules=rules)
 
-    def propagate(self,input):
-        children = []
-        reset_label = False
-        if  Rule.check_identifier(input):
-            children = [IDTerminal]
-            reset_label = True
-        elif Rule.check_int(input):
-            children = [NumTerminal]
-            reset_label = True
-        elif input=='(':
-            children = [leftBracketTerminal,Exp,rightBracketTerminal]
-        else:
-            self.raise_exception(input)
-
-        if children:
-            super().add_children(children)
-            children = super().get_children()
-            if reset_label:
-                children[0].set_label(input)
-
-
-        return children
-
+    
 class Term(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
+        rules = dict()
+        rules['id'] = [Factor,TermDash] 
+        rules['Num'] = [Factor,TermDash]
+        rules['('] = [Factor,TermDash]
         TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Term', False)
-        Rule.__init__( self,rule_name='Term')
+        Rule.__init__( self,rule_name='Term',rules=rules)
         
 
-    def propagate(self,input):
-        children = []
-        if input =='(' or  Rule.check_identifier(input) or Rule.check_int(input) :
-            children = [Factor,TermDash]
-        else:
-            self.raise_exception(input)
-
-        if children:
-            super().add_children(children)
-            children = super().get_children()
-
-
-        return children
         
 
 class TermDash(TreeNodeDrawing,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
+        rules = dict()
+        rules['*'] = [Mullop,Factor,TermDash]
+        rules['/'] = [Mullop,Factor,TermDash]
+        rules['+'] = [EpsilonTerminal]
+        rules['-'] = [EpsilonTerminal]
+        rules[')'] = [EpsilonTerminal]
+        rules['$'] = [EpsilonTerminal]
         TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Term\'', False)
-        Rule.__init__( self,rule_name='Term\'')
+        Rule.__init__( self,rule_name='Term\'',rules=rules)
 
-    def propagate(self,input):
-        children = []
-        if input =='*' or input == '/':
-            children = [Mullop,Factor,TermDash]
-        elif input =='+' or input =='-' or input ==')' or input=='$':
-            children = [EpsilonTerminal]
-        else:
-            self.raise_exception(input)
-
-        if children:
-            super().add_children(children)
-            children = super().get_children()
-        
-        return children
-
+    
 
     

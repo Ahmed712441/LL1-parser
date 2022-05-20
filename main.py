@@ -1,7 +1,5 @@
 
-import tkinter as tk
 from tkinter import *
-from turtle import width 
 from GUI.settings import *
 import sys
 from tkinter.ttk import *
@@ -11,6 +9,8 @@ from parser.parser import Parser
 from tkinter import messagebox
 from GUI.tree import TreeCanvas
 from GUI.table import TableWindow
+from parser.abstract import AbstractSyntaxAnalyzer
+
 
 BASE_DIR = Path(__file__).resolve().parent.__str__()
 sys.path.append(BASE_DIR)
@@ -25,39 +25,60 @@ class Main(Frame):
         self.__str_entry = Entry(self)
         self.__submit_string = Button(self ,text="Submit String" , command=self.__submit)
         self.canvas = TreeCanvas(self)
+        self.abstractcanvas = TreeCanvas(self)
         self.__actions = None
         self.__parser =  Parser(self.canvas.canvas,Exp)
         self.__show_button = Button(self ,text="Show Action Table" , command=self.__show_table)
+        self.__show_abstract = Button(self ,text="Show Abstract Tree" , command=self.__show_abstract_tree)
+        self.__show_parse = Button(self ,text="Show parse Tree" , command=self.__show_parse_tree)
         self.__pack_on_screen()
         
 
     def __show_table(self):
         if self.__actions:
             TableWindow(self,rows=self.__actions)
-        
-        
+    
+    def __show_abstract_tree(self):
+        self.canvas.grid_forget()
+        self.abstractcanvas.grid(row=1,column=0,columnspan=5,sticky=(N,W,E,S))
+        self.__show_abstract.grid_forget()
+        self.__show_parse.grid(row=0,column=4,sticky=(N,W,E,S))
+
+    def __show_parse_tree(self):
+        self.abstractcanvas.grid_forget()
+        self.canvas.grid(row=1,column=0,columnspan=5,sticky=(N,W,E,S))
+        self.__show_parse.grid_forget()
+        self.__show_abstract.grid(row=0,column=4,sticky=(N,W,E,S))
+
     def __pack_on_screen(self):
         self.__str_label.grid(column=0,row=0,sticky=(N,W,E,S))
         self.__str_entry.grid(row=0,column=1,sticky=(N,W,E,S))
         
         self.__submit_string.grid(row=0,column=2,sticky=(N,W,E,S))
         self.__show_button.grid(row=0,column=3,sticky=(N,W,E,S))
-        self.canvas.grid(row=1,column=0,columnspan=4,sticky=(N,W,E,S))
+        self.__show_abstract.grid(row=0,column=4,sticky=(N,W,E,S))
+        self.canvas.grid(row=1,column=0,columnspan=5,sticky=(N,W,E,S))
+        
+        
         
         self.columnconfigure(0,weight=1)
         self.columnconfigure(1,weight=4)
         self.columnconfigure(2,weight=1)
         self.columnconfigure(3,weight=1)
+        self.columnconfigure(4,weight=1)
         self.rowconfigure(1,weight=1)
 
     def __submit(self):
         
         try:
             self.canvas.canvas.delete("all") 
+            self.abstractcanvas.canvas.delete("all")
             self.__actions = []
             self.__actions.append(['Stack','Input','Action'])
-            self.__parser.parse(self.__str_entry.get(),self.__actions)
-        except :
+            terminals = self.__parser.parse(self.__str_entry.get(),self.__actions)
+            AbstractSyntaxAnalyzer(terminals,self.abstractcanvas.canvas,self.canvas.canvas.winfo_width())
+        except Exception as e:
+            print(e)
             self.canvas.canvas.delete("all")
             messagebox.showerror(title="Parse Error",message="Your string can\'t be parsed check action table for details")   
 

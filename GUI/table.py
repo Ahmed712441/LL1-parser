@@ -1,6 +1,7 @@
 import tkinter as tk, tkinter.ttk as ttk
 from typing import Iterable
 
+from tkinter import *
    
 class ScrollFrame(tk.Frame):
     def __init__(self, master, scrollspeed=5, r=0, c=0, rspan=1, cspan=1, grid={}, **kwargs):
@@ -90,6 +91,6 @@ class TableWindow(tk.Toplevel):
             for j in range(len(self.__rows[0])):
                 e = tk.Entry(self.scrollframe, width=30,
                             font=('Arial',16,'bold'))      
-                e.grid(row=row, column=j)
+                e.grid(row=row, column=j,sticky=(N,W,E,S))
                 e.insert(tk.END, str(self.__rows[row][j]))
                 e.config(state=tk.DISABLED,disabledbackground="white",disabledforeground='black')

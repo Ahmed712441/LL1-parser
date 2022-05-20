@@ -6,7 +6,6 @@ class Parser:
 
     def __init__(self,parsetreecanvas,start_rule):
         self.__parsetreecanvas = parsetreecanvas
-        # self.__action_table = actiontable
         self.__start_rule = start_rule
 
     @staticmethod
@@ -37,7 +36,7 @@ class Parser:
         return tokens
 
     def parse(self,input,action_table):
-        
+        terminals = []
         initial_exp = self.__start_rule(self.__parsetreecanvas,0,None,0,self.__parsetreecanvas.winfo_width())
         initial_exp.draw()
         stack = [initial_exp,'$']
@@ -55,11 +54,15 @@ class Parser:
                     stack.insert(i,rules[i])
             elif isinstance(rule,EpsilonTerminal):
                 action = 'remove epsilon'
+                terminals.append(rule)
             else:
+                terminals.append(rule)
                 if(rule.__str__() == input[0]):
                     action = f'match , pop({input[0]})'
                     input.__delitem__(0)
-
+                else:
+                    action_table.append([stack_state,input_state,'Error terminals don\'t match'])
+                    raise Exception()
             action_table.append([stack_state,input_state,action])
 
-
+        return terminals[:-1]

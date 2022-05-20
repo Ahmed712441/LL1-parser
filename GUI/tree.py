@@ -163,6 +163,7 @@ class TreeCanvas(Frame):
 
     def __init__(self,root,canvas_width=1000,canvas_height=10000):
         
+        # if root :
         Frame.__init__(self, root) 
         self.count_nodes = 0 # this variable used to count nodes helpful in labeling nodes
         self.hor_scrollbar = Scrollbar(self, orient=HORIZONTAL)
