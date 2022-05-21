@@ -48,7 +48,11 @@ class Parser:
             input_state = ''.join(input)
             rule = stack.pop(0)
             if isinstance(rule,Rule):
-                rules =  rule.propagate(input[0])
+                try:
+                    rules =  rule.propagate(input[0])
+                except Exception as e:
+                    action_table.append([stack_state,input_state,e.__str__()])
+                    raise Exception()
                 action = rule.__repr__() + '-->'
                 for i in range(len(rules)):
                     action += rules[i].__repr__()

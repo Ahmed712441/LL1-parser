@@ -80,7 +80,6 @@ class Main(Frame):
             terminals = self.__parser.parse(self.__str_entry.get(),self.__actions)
             AbstractSyntaxAnalyzer(terminals,self.abstractcanvas.canvas,self.canvas.canvas.winfo_width())
         except Exception as e:
-            print(e)
             self.canvas.canvas.delete("all")
             messagebox.showerror(title="Parse Error",message="Your string can\'t be parsed check action table for details")   
 

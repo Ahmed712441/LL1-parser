@@ -20,7 +20,10 @@ class Rule:
         id = self.check_identifier(input)
         num = self.check_int(input)
         str =  'id' if id else 'Num' if num else input
-        children = self.__rule_dict[str]
+        try:
+            children = self.__rule_dict[str]
+        except:
+           self.raise_exception(input)
         self.add_children(children)
         children = self.get_children()
         if (isinstance(children[0],(NumTerminal,IDTerminal))):
