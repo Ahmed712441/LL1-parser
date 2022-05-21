@@ -1,19 +1,21 @@
+import sys
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.__str__()
+sys.path.append(BASE_DIR)
+
 
 from tkinter import *
 from GUI.settings import *
-import sys
 from tkinter.ttk import *
-from pathlib import Path
-from parser.grammar import *
-from parser.parser import Parser
+from parsers.grammar import *
+from parsers.parser import Parser
 from tkinter import messagebox
 from GUI.tree import TreeCanvas
 from GUI.table import TableWindow
-from parser.abstract import AbstractSyntaxAnalyzer
+from parsers.abstract import AbstractSyntaxAnalyzer
 
 
-BASE_DIR = Path(__file__).resolve().parent.__str__()
-sys.path.append(BASE_DIR)
+
 
 
 

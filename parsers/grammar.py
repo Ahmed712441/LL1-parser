@@ -1,7 +1,7 @@
 from GUI.tree import TreeNodeDrawing
 from tkinter import *
 from GUI.settings import *
-from parser.terminals import *
+from parsers.terminals import *
 
 class Rule:
 

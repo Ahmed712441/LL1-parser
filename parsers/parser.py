@@ -1,6 +1,6 @@
 from GUI.tree import TreeNodeDrawing
-from parser.grammar import *
-from parser.terminals import *
+from parsers.grammar import *
+from parsers.terminals import *
 
 class Parser:
 
@@ -27,8 +27,9 @@ class Parser:
                     tokens.append(str)
                 tokens.append(char)
                 str = ''
-            elif char != ' ':
+            elif char != ' ' or (str and char == ' '):
                 str+=char
+
 
         if str:
             tokens.append(str)

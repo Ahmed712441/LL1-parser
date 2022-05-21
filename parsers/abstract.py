@@ -1,4 +1,4 @@
-from parser.terminals import *
+from parsers.terminals import *
 
 class AbstractSyntaxAnalyzer:
 
