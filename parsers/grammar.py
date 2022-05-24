@@ -1,4 +1,4 @@
-from GUI.tree import TreeNodeDrawing
+from GUI.tree import TreeNode
 from tkinter import *
 from GUI.settings import *
 from parsers.terminals import *
@@ -53,18 +53,18 @@ class Rule:
 
 
 
-class Exp(TreeNodeDrawing,Rule):
+class Exp(TreeNode,Rule):
     
     def __init__(self, treecanvas, level, parent, left, right,):
         rules = dict()
         rules['('] = [ Term ,ExpDash ]
         rules['id'] = [ Term ,ExpDash ]
         rules['Num'] = [ Term ,ExpDash ] 
-        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Exp', False)
+        TreeNode.__init__(self,treecanvas,level,parent,left, right, None,'Exp', False)
         Rule.__init__(self,rule_name= 'Exp',rules=rules)
 
 
-class ExpDash(TreeNodeDrawing,Rule):
+class ExpDash(TreeNode,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
         rules = dict()
@@ -72,55 +72,55 @@ class ExpDash(TreeNodeDrawing,Rule):
         rules['-'] = [Addop,Term,ExpDash]
         rules[')'] = [EpsilonTerminal]
         rules['$'] = [EpsilonTerminal] 
-        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Exp\'', False)
+        TreeNode.__init__(self,treecanvas,level,parent,left, right, None,'Exp\'', False)
         Rule.__init__(self,rule_name= 'Exp\'',rules=rules)
 
 
-class Addop(TreeNodeDrawing,Rule):
+class Addop(TreeNode,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
         rules = dict()
         rules['+'] = [plusTerminal] 
         rules['-'] = [minusTerminal]
-        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Addop', False)
+        TreeNode.__init__(self,treecanvas,level,parent,left, right, None,'Addop', False)
         Rule.__init__( self,rule_name= 'Addop',rules=rules)
         
 
-class Mullop(TreeNodeDrawing,Rule):
+class Mullop(TreeNode,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
         rules = dict()
         rules['*'] = [multiplyTerminal] 
         rules['/'] = [divisionTerminal]
-        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Mullop', False)
+        TreeNode.__init__(self,treecanvas,level,parent,left, right, None,'Mullop', False)
         Rule.__init__( self,rule_name= 'Mullop',rules=rules)
 
 
-class Factor(TreeNodeDrawing,Rule):
+class Factor(TreeNode,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
         rules = dict()
         rules['id'] = [IDTerminal] 
         rules['Num'] = [NumTerminal]
         rules['('] = [leftBracketTerminal,Exp,rightBracketTerminal]
-        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Factor', False)
+        TreeNode.__init__(self,treecanvas,level,parent,left, right, None,'Factor', False)
         Rule.__init__(self, rule_name='Factor',rules=rules)
 
     
-class Term(TreeNodeDrawing,Rule):
+class Term(TreeNode,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
         rules = dict()
         rules['id'] = [Factor,TermDash] 
         rules['Num'] = [Factor,TermDash]
         rules['('] = [Factor,TermDash]
-        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Term', False)
+        TreeNode.__init__(self,treecanvas,level,parent,left, right, None,'Term', False)
         Rule.__init__( self,rule_name='Term',rules=rules)
         
 
         
 
-class TermDash(TreeNodeDrawing,Rule):
+class TermDash(TreeNode,Rule):
 
     def __init__(self, treecanvas, level, parent, left, right,):
         rules = dict()
@@ -130,7 +130,7 @@ class TermDash(TreeNodeDrawing,Rule):
         rules['-'] = [EpsilonTerminal]
         rules[')'] = [EpsilonTerminal]
         rules['$'] = [EpsilonTerminal]
-        TreeNodeDrawing.__init__(self,treecanvas,level,parent,left, right, None,'Term\'', False)
+        TreeNode.__init__(self,treecanvas,level,parent,left, right, None,'Term\'', False)
         Rule.__init__( self,rule_name='Term\'',rules=rules)
 
     

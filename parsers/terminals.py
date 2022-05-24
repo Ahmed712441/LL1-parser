@@ -1,55 +1,55 @@
-from GUI.tree import TreeNodeDrawing
+from GUI.tree import TreeNode
 from GUI.settings import EPSILON
 
-class plusTerminal(TreeNodeDrawing):
+class plusTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         
         super().__init__(treecanvas,level,parent,left, right, None,'+', True)
     
 
-class minusTerminal(TreeNodeDrawing):
+class minusTerminal(TreeNode):
     def __init__(self,treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,'-', True)
     
     
-class leftBracketTerminal(TreeNodeDrawing):
+class leftBracketTerminal(TreeNode):
     def __init__(self,treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,'(', True)
 
     
-class rightBracketTerminal(TreeNodeDrawing):
+class rightBracketTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,')', True)
     
     
-class multiplyTerminal(TreeNodeDrawing):
+class multiplyTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,'*', True)
 
     
-class divisionTerminal(TreeNodeDrawing):
+class divisionTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,'/', True)
     
     
-class EpsilonTerminal(TreeNodeDrawing):
+class EpsilonTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,EPSILON, True)
     
     
-class dollarTerminal(TreeNodeDrawing):
+class dollarTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,'$', True)
     
     
-class IDTerminal(TreeNodeDrawing):
+class IDTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,'ID', True)
     
     def __repr__(self) -> str:
         return 'ID'
 
-class NumTerminal(TreeNodeDrawing):
+class NumTerminal(TreeNode):
     def __init__(self, treecanvas, level, parent, left, right,):
         super().__init__(treecanvas,level,parent,left, right, None,'Num', True)
     

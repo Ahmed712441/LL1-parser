@@ -1,7 +1,7 @@
 from tkinter import *
 from .settings import *
 
-class TreeNodeDrawing:
+class TreeNode:
 
     def __init__(self,treecanvas,level,parent,left,right,Line=None,label='a',terminal=True):
         self.__terminal = terminal

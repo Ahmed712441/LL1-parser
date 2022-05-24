@@ -1,4 +1,4 @@
-from GUI.tree import TreeNodeDrawing
+from GUI.tree import TreeNode
 from parsers.grammar import *
 from parsers.terminals import *
 
@@ -12,7 +12,7 @@ class Parser:
     def join_list(input):
         str = ''
         for grammar in input[:]:
-            if isinstance(grammar,TreeNodeDrawing):
+            if isinstance(grammar,TreeNode):
                 str += grammar.__repr__()
             else:
                 str += grammar
