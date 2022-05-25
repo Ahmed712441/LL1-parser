@@ -7,7 +7,7 @@ class Rule:
 
     def __init__(self,rule_name,rules=None):
         self.__rule_name = rule_name
-        self.__rule_dict = rules
+        self.rule_dict = rules
 
     def __str__(self):
         return self.__rule_name
@@ -21,7 +21,7 @@ class Rule:
         num = self.check_int(input)
         str =  'id' if id else 'Num' if num else input
         try:
-            children = self.__rule_dict[str]
+            children = self.rule_dict[str]
         except:
            self.raise_exception(input)
         self.add_children(children)

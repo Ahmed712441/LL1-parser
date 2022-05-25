@@ -46,10 +46,11 @@ class TreeNode:
         return self.__children
 
     def draw(self):
+        
         if not self.__terminal:
             self.__id = self.__create_circle()
         self.__label_id = self.__canvas.create_text((self.__x, self.__y), text=self.__label)
-        
+    
 
     def delete(self):
         if not self.__terminal:
@@ -89,9 +90,11 @@ class TreeNode:
 
         
         node = child_class(self.__canvas,self.__level+1,self,left,right)
+        
         node.draw()
         line = self.create_line(node.get_coor())
         node.set_parent_line(line)
+        
         self.__children.append(node)
         
         
@@ -132,10 +135,10 @@ class TreeNode:
     
 
     def add_children(self,children):
-
+        
         for child in children:
             self.add_child(child)
-            
+                
         
     
     def add_child(self,child):

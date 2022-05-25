@@ -11,7 +11,7 @@ from parsers.grammar import *
 from parsers.parser import Parser
 from tkinter import messagebox
 from GUI.tree import TreeCanvas
-from GUI.table import TableWindow
+from GUI.table import TableWindow,ParseTableWindow
 from parsers.abstract import AbstractSyntaxAnalyzer
 
 
@@ -33,8 +33,11 @@ class Main(Frame):
         self.__show_button = Button(self ,text="Show Action Table" , command=self.__show_table)
         self.__show_abstract = Button(self ,text="Show Abstract Tree" , command=self.__show_abstract_tree)
         self.__show_parse = Button(self ,text="Show parse Tree" , command=self.__show_parse_tree)
+        self.__show_parse_button = Button(self ,text="Show parse Table" , command=self.__show_parse_table)
         self.__pack_on_screen()
-        
+    
+    def __show_parse_table(self):
+        ParseTableWindow(self)
 
     def __show_table(self):
         if self.__actions:
@@ -42,13 +45,13 @@ class Main(Frame):
     
     def __show_abstract_tree(self):
         self.canvas.grid_forget()
-        self.abstractcanvas.grid(row=1,column=0,columnspan=5,sticky=(N,W,E,S))
+        self.abstractcanvas.grid(row=1,column=0,columnspan=6,sticky=(N,W,E,S))
         self.__show_abstract.grid_forget()
         self.__show_parse.grid(row=0,column=4,sticky=(N,W,E,S))
 
     def __show_parse_tree(self):
         self.abstractcanvas.grid_forget()
-        self.canvas.grid(row=1,column=0,columnspan=5,sticky=(N,W,E,S))
+        self.canvas.grid(row=1,column=0,columnspan=6,sticky=(N,W,E,S))
         self.__show_parse.grid_forget()
         self.__show_abstract.grid(row=0,column=4,sticky=(N,W,E,S))
 
@@ -59,7 +62,8 @@ class Main(Frame):
         self.__submit_string.grid(row=0,column=2,sticky=(N,W,E,S))
         self.__show_button.grid(row=0,column=3,sticky=(N,W,E,S))
         self.__show_abstract.grid(row=0,column=4,sticky=(N,W,E,S))
-        self.canvas.grid(row=1,column=0,columnspan=5,sticky=(N,W,E,S))
+        self.__show_parse_button.grid(row=0,column=5,sticky=(N,W,E,S))
+        self.canvas.grid(row=1,column=0,columnspan=6,sticky=(N,W,E,S))
         
         
         
@@ -68,6 +72,7 @@ class Main(Frame):
         self.columnconfigure(2,weight=1)
         self.columnconfigure(3,weight=1)
         self.columnconfigure(4,weight=1)
+        self.columnconfigure(5,weight=1)
         self.rowconfigure(1,weight=1)
 
     def __submit(self):
@@ -80,6 +85,7 @@ class Main(Frame):
             terminals = self.__parser.parse(self.__str_entry.get(),self.__actions)
             AbstractSyntaxAnalyzer(terminals,self.abstractcanvas.canvas,self.canvas.canvas.winfo_width())
         except Exception as e:
+            print(e)
             self.canvas.canvas.delete("all")
             messagebox.showerror(title="Parse Error",message="Your string can\'t be parsed check action table for details")   
 
