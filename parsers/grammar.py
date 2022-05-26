@@ -38,7 +38,7 @@ class Rule:
             return False
         except:
             for char in input:
-                if not ( ( char >= '1' and char <= '9') or ( char >= 'a' and char <= 'z') or ( char >= 'A' and char <= 'Z')):
+                if not ( ( char >= '0' and char <= '9') or ( char >= 'a' and char <= 'z') or ( char >= 'A' and char <= 'Z')):
                     return False
         return True
 

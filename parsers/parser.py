@@ -42,6 +42,7 @@ class Parser:
         initial_exp.draw()
         stack = [initial_exp,'$']
         input = self.__parse_input(input)
+        print(input)
         action = ''
         while len(input) >0:
             stack_state = Parser.join_list(stack)

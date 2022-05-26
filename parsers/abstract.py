@@ -55,7 +55,7 @@ class AbstractSyntaxAnalyzer:
         max_priority = 0
         for i in range(1,len(list)):
             if isinstance(list[i],TreeNode):
-                if list[i].pirority > list[max_priority].pirority :
+                if list[i].pirority >= list[max_priority].pirority :
                     max_priority = i
 
         return max_priority
