@@ -2,7 +2,10 @@ from GUI.tree import TreeNode
 from parsers.grammar import *
 from parsers.terminals import *
 
+
 class Parser:
+
+    SPLIT_TERMINALS = ('+' , '-' , '*' , '/' , ')' , '(')  #Terminals in which you split tokens on them helps in generate tokens from string 
 
     def __init__(self,parsetreecanvas,start_rule):
         self.__parsetreecanvas = parsetreecanvas
@@ -22,14 +25,13 @@ class Parser:
         tokens = []
         str = ''
         for char in input:
-            if char == '+' or char == '-' or char == '*' or char == '/' or char == ')' or char == '(' :
+            if char in self.SPLIT_TERMINALS :
                 if str:
                     tokens.append(str)
                 tokens.append(char)
                 str = ''
             elif char != ' ' or (str and char == ' '):
                 str+=char
-
 
         if str:
             tokens.append(str)
@@ -53,7 +55,7 @@ class Parser:
                 except Exception as e:
                     action_table.append([stack_state,input_state,e.__str__()])
                     raise Exception()
-                action = rule.__repr__() + '-->'
+                action = rule.__repr__() + '\u2192'
                 for i in range(len(rules)):
                     action += rules[i].__repr__()
                     stack.insert(i,rules[i])

@@ -1,3 +1,4 @@
+from tkinter import SEPARATOR
 from parsers.terminals import *
 
 class TempNode:
@@ -12,15 +13,25 @@ class TempNode:
         if not curr:
             curr = self.terminal.__class__(canvas,level,parent,left,right)
             curr.draw()
-        if self.__left and self.__right:
-            curr.add_children([self.__left.terminal.__class__, self.__right.terminal.__class__])
+
+        if self.__left:
+            curr.add_children([self.__left.terminal.__class__])
             children = curr.get_children()
             children[0].set_label(self.__left.terminal.__str__())
-            children[1].set_label(self.__right.terminal.__str__())
             self.__left.drawnode(curr=children[0])
-            self.__right.drawnode(curr=children[1])
+        
+        if self.__right:
+            curr.add_children([self.__right.terminal.__class__])
+            children = curr.get_children()
+            children[-1].set_label(self.__right.terminal.__str__())
+            self.__right.drawnode(curr=children[-1])
+
 
 class AbstractSyntaxAnalyzer:
+
+    TERMINALS = (IDTerminal,NumTerminal,plusTerminal,minusTerminal,multiplyTerminal,divisionTerminal) # Terminals which will participate in abstract tree
+    SEPARATOR = (leftBracketTerminal) # Terminal in which when found start new list of tokens which is treated as single element in old token ex: 2*(3*3) this will make your list = [2,*,[3,*,3]] instead of list = [2,*,3,*,3]
+    TERMINATOR = (rightBracketTerminal) # Terminal in which End the separtor created list right bracket in my case  
 
     def __init__(self,terminals,treecanvas,width):
 
@@ -35,15 +46,15 @@ class AbstractSyntaxAnalyzer:
         list = []
         i = 0
         while i < len(self.__terminals):
-            if isinstance(self.__terminals[i],(IDTerminal,NumTerminal,plusTerminal,minusTerminal,multiplyTerminal,divisionTerminal)):
+            if isinstance(self.__terminals[i],self.TERMINALS):
                 list.append(self.__terminals[i])
-            elif isinstance(self.__terminals[i],leftBracketTerminal):
+            elif isinstance(self.__terminals[i],self.SEPARATOR):
                 lst = []
                 while i < len(self.__terminals):
                     i+=1
-                    if isinstance(self.__terminals[i],(IDTerminal,NumTerminal,plusTerminal,minusTerminal,multiplyTerminal,divisionTerminal)):
+                    if isinstance(self.__terminals[i],self.TERMINALS):
                         lst.append(self.__terminals[i])
-                    elif isinstance(self.__terminals[i],rightBracketTerminal):
+                    elif isinstance(self.__terminals[i],self.TERMINATOR):
                         list.append(lst)
                         break
             i+=1 

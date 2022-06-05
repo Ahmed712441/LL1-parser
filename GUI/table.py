@@ -4,11 +4,12 @@ from parsers.terminals import *
 from parsers.grammar import *
 from parsers.parser import Parser
 from tkinter import *
-   
+
 TERMINALS = [plusTerminal,minusTerminal,leftBracketTerminal,rightBracketTerminal,multiplyTerminal,divisionTerminal,
                         dollarTerminal,IDTerminal,NumTerminal]
 
 RULES = [Exp,ExpDash,Addop,Mullop,Factor,Term,TermDash]
+
 
 class ScrollFrame(tk.Frame):
     def __init__(self, master, scrollspeed=5, r=0, c=0, rspan=1, cspan=1, grid={}, **kwargs):

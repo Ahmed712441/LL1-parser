@@ -17,8 +17,6 @@ from parsers.abstract import AbstractSyntaxAnalyzer
 
 
 
-
-
 class Main(Frame):
 
     def __init__(self,root):
