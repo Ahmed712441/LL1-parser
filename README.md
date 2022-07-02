@@ -74,7 +74,11 @@ repeat this process for other terminals
 ```
 in parsers/parser.py
 you need to define this tuple
-SPLIT_TERMINALS = ('+' , '-' , '*' , '/' , ')' , '(') # tuple which is used to genarate your tokens
+SPLIT_TERMINALS = ('+' , '-' , '*' , '/' , ')' , '(') # tuple which is used to genarate your tokens (split by charachters)
+
+example: input = 'num10+num20-11' and SPLIT_TERMINALS = ('+' , '-')
+tokens = ['num10','+','num20','-','11']
+you can take a look at Parser.__parse_input() function which is responsible for generating tokens
 ```
 #### Abstract Syntax Analyzer implementation
 ```
