@@ -78,7 +78,7 @@ SPLIT_TERMINALS = ('+' , '-' , '*' , '/' , ')' , '(') # tuple which is used to g
 
 example: input = 'num10+num20-11' and SPLIT_TERMINALS = ('+' , '-')
 tokens = ['num10','+','num20','-','11']
-you can take a look at Parser.__parse_input() function which is responsible for generating tokens
+for more details about implementation you can take a look at Parser.__parse_input() function which is responsible for generating tokens
 ```
 #### Abstract Syntax Analyzer implementation
 ```
